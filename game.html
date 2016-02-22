@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<link rel="stylesheet" href="core.css">
+
+	<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<title>spel</title>
+</head>
+<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	html, body {
+		height: 100%;
+		width: 100%;
+	}
+	canvas {
+		max-height: 100%;
+		max-width: 100%;
+	}
+</style>
+<body>
+
+<canvas id="canvas" width="1200 " height="660" style="border:1px solid #000000;box-sizing:border-box;"></canvas>
+
+<script src="options.js"></script>
+<script src="powers.js"></script>
+<script src="players.js"></script>
+<script>
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
+game.player[1] = characters[1];
+game.player[2] = characters[2];
+
+////////// images ///////////
+var backgroundimg = new Image();
+backgroundimg.src = "image/background/"+options.background.image+".jpg";
+
+var playerturn = new Image();
+playerturn.src = "image/arrow_down.gif";
+
+var player1img = new Image();
+player1img.src = "image/character/player1/"+game.player[1].character+".gif";
+
+var player2img = new Image();
+player2img.src = "image/character/player2/"+game.player[2].character+".gif";
+
+for(var i = 0; i < Object.keys(characters).length; i++) {
+	characters[i].id = new Image();
+	characters[i].id.src = "image/character/player1/"+characters[i].character+".gif";
+}
+
+var stats = new Image();
+stats.src = "image/stats.gif";
+
+var arrowturnDir = 1;
+var arrowturnY = 250;
+var	arrowturnYMax = 260;
+
+window.onload = function(){
+	// setup();
+	// redraw();
+	game.player.turn = 1;
+	setInterval(redraw, 1000 / options.game.fps);
+}
+
+function setup(){
+
+	posx = 40;
+	posy = 20;
+	
+	ctx.font = "16px Arial";
+	ctx.textAlign = "left";
+
+	for(var i = 0; i < Object.keys(characters).length; i++) {
+		ctx.drawImage(characters[i].id, posx, posy, 80, 120);
+
+		ctx.fillStyle = "#000000";
+		ctx.fillText(characters[i].name, posx, posy);
+
+		characters[i].damage = 0;
+		characters[i].energy = 0;
+		characters[i].healing = 0;
+
+		for(var p = 1; p < Object.keys(characters[i].powers).length; p++) {
+			damage = averageNumber(characters[i].powers[p].damage.min, characters[i].powers[p].damage.max);
+			characters[i].damage = characters[i].damage + damage;
+			energy = averageNumber(characters[i].powers[p].energy.cost, characters[i].powers[p].energy.generate);
+			characters[i].energy = characters[i].energy + energy;
+			healing = averageNumber(characters[i].powers[p].healing.min, characters[i].powers[p].healing.max);
+			characters[i].healing = characters[i].healing + healing;
+		}
+
+		ctx.fillStyle = "#000000";
+		ctx.fillRect(posx, 160, 100, 62);
+		ctx.drawImage(stats, posx - 30, 160, 23, 62);
+
+		ctx.fillStyle = "#DADADA";
+		ctx.fillRect(posx, 160, characters[i].damage, 20);
+
+		ctx.fillStyle = "#FCE93B";
+		ctx.fillRect(posx, 181, 100 - characters[i].energy, 20);
+
+		ctx.fillStyle = "#D50000";
+		ctx.fillRect(posx, 202, characters[i].healing, 20);
+
+		posx = posx + 150;
+	}
+
+	canvas.onclick = function(e) {
+		// console.log("x: "+e.clientX+", y: "+e.clientY);
+	}
+}
+
+function redraw(){
+	canvas.width = canvas.width;
+
+	// menu
+	ctx.fillStyle = "#3E2723";
+	ctx.rect(0, 0, 1200, 60);
+	ctx.rect(0, 510, 1200, 150);
+	ctx.fill();
+
+	// stats
+	ctx.fillStyle = "#000000";
+	ctx.fillRect(10, 5, 100, 31);
+	ctx.fillRect(1090, 5, 100, 31);
+
+	ctx.fillStyle="#D50000";
+	ctx.fillRect(10, 5, (game.player[1].stats.health / 100) * 100, 15);
+	ctx.fillRect(1090, 5, (game.player[2].stats.health / 100) * 100, 15);
+
+	ctx.fillStyle = "#43A047";
+	ctx.fillRect(10, 21, (game.player[1].stats.energy / 100) * 100, 15);
+	ctx.fillRect(1090, 21, (game.player[2].stats.energy / 100) * 100, 15);
+
+
+	ctx.font = "12px Arial";
+	ctx.textAlign = "left";
+	ctx.fillStyle = "#ffffff";
+	ctx.fillText(game.player[1].name, 10, 52);
+	ctx.fillText(game.player[2].name, 1090, 52);
+
+	ctx.font = "10px Arial";
+	ctx.textAlign = "center";
+	ctx.fillText(game.player[1].stats.health+"/100", 60, 16);
+	ctx.fillText(game.player[1].stats.energy+"/100", 60, 32);
+	ctx.fillText(game.player[2].stats.health+"/100", 1140, 16);
+	ctx.fillText(game.player[2].stats.energy+"/100", 1140, 32);
+
+	ctx.font = "18px Arial";
+	ctx.fillText(options.default.actiontext, 600, 535);
+	ctx.fillText(options.default.actiondamage, 600, 565);
+	ctx.fillText(options.default.actionhealing, 600, 585);
+	ctx.fillText(options.default.actionenergy, 600, 605);
+
+	var posy = 520;
+	ctx.textAlign = "left";
+
+	for (i = 1; i <= Object.keys(game.player[1].powers).length; i++) {
+		posy = posy + 24;
+		ctx.fillText(i+": "+game.player[1].powers[i].name, 10, posy);
+	}
+
+	ctx.textAlign = "right";
+	var posy = 520;
+	for (i = 1; i <= Object.keys(game.player[2].powers).length; i++) {
+		posy = posy + 24;
+		ctx.fillText(i+": "+game.player[2].powers[i].name, 1190, posy);
+	}
+
+	ctx.drawImage(backgroundimg, 0, 60, 1200, 450);
+	ctx.drawImage(player1img, 100, 300, 110, 195);
+	ctx.drawImage(player2img, 1000, 300, 110, 195);
+
+	thisplayerturn();
+}
+
+function thisplayerturn(){
+	if (arrowturnDir === 1) {
+		arrowturnY += 1;
+
+		if (arrowturnY > 260) {
+			arrowturnDir = -1;
+		}
+	} else {
+		arrowturnY -= 1;
+
+		if(arrowturnY < 240) {
+			arrowturnDir = 1;
+		}
+	}
+
+	if(game.player.turn === 1) {
+		posX = 135;
+		ctx.drawImage(playerturn, posX, arrowturnY, 40, 40);
+	} else if (game.player.turn === 2) {
+		posX = 1035;
+		ctx.drawImage(playerturn, posX, arrowturnY, 40, 40);
+	}
+}
+
+document.body.onkeypress = function(e) {
+	if(e.keyCode === 49 || e.keyCode === 50 || e.keyCode === 51 || e.keyCode === 52 || e.keyCode === 53) {
+		switch(e.keyCode){
+			case 49:
+				move = 1;
+				break;
+			case 50:
+				move = 2;
+				break;
+			case 51:
+				move = 3;
+				break;
+			case 52:
+				move = 4;
+				break;
+			case 53:
+				move = 5;
+				break;
+		}
+
+		// updateStats();
+
+		if (game.player.turn === 1) {
+			if(game.player[1].stats.energy - game.player[1].powers[move].energy.cost < 0){
+				alert('Niet genoeg energie');
+			} else {
+				damage = randomNumber(game.player[1].powers[move].damage.min, game.player[1].powers[move].damage.max);
+				healing = randomNumber(game.player[1].powers[move].healing.min, game.player[1].powers[move].healing.max)
+
+				options.default.actiontext = game.player[1].name+" gebruikt: "+game.player[1].powers[move].name;
+				options.default.actiondamage = "Schade: -"+damage;
+				options.default.actionhealing = "Levens: +"+healing;
+
+				if (game.player[1].powers[move].energy.cost === 0) {
+					options.default.actionenergy = "Energie: +"+game.player[1].powers[move].energy.generate;
+					game.player[1].stats.energy += game.player[1].powers[move].energy.generate;
+					if (game.player[1].stats.energy > 100) {
+						game.player[1].stats.energy = 100;
+					}
+				} else {
+					options.default.actionenergy = "Energie: -"+game.player[1].powers[move].energy.cost;
+					game.player[1].stats.energy -= game.player[1].powers[move].energy.cost;
+					if (game.player[1].stats.energy < 0) {
+						game.player[1].stats.energy = 0;
+					}
+				}
+
+				game.player[1].stats.health += healing;
+				if (game.player[1].stats.health > 100) {
+					game.player[1].stats.health = 100;
+				}
+
+				game.player[2].stats.health -= damage;
+				if (game.player[2].stats.health < 0) {
+					game.player[2].stats.health = 0;
+					setTimeout(function(){ alert(game.player[2].name+" is dood"); }, 20);
+				}
+				game.player.turn = 2;
+			}
+		} else if (game.player.turn === 2) {
+			if(game.player[2].stats.energy - game.player[2].powers[move].energy.cost < 0){
+				alert('Niet genoeg energie');
+			} else {
+				if(game.player[2].powers[move].energy.cost === 0){
+					options.default.actionenergy = "Energie: +"+game.player[2].powers[move].energy.generate;
+					game.player[2].stats.energy += game.player[2].powers[move].energy.generate;
+					if (game.player[2].stats.energy > 100) {
+						game.player[2].stats.energy = 100;
+					}
+				} else {
+					options.default.actionenergy = "Energie: -"+game.player[2].powers[move].energy.cost;
+					game.player[2].stats.energy -= game.player[2].powers[move].energy.cost;
+					if (game.player[2].stats.energy < 0) {
+						game.player[2].stats.energy = 0;
+					}
+				}
+
+				damage = randomNumber(game.player[2].powers[move].damage.min, game.player[2].powers[move].damage.max);
+				healing = randomNumber(game.player[2].powers[move].healing.min, game.player[2].powers[move].healing.max);
+
+				options.default.actiontext = game.player[2].name+" gebruikt: "+game.player[2].powers[move].name;
+				options.default.actiondamage = "Schade: -"+damage;
+				options.default.actionhealing = "Levens: +"+healing;
+
+				game.player[2].stats.health += healing;
+				if (game.player[2].stats.health > 100) {
+					game.player[2].stats.health = 100;
+				}
+
+				game.player[1].stats.health -= damage;
+				if (game.player[1].stats.health <= 0) {
+					game.player[1].stats.health = 0;
+					setTimeout(function(){ alert(game.player[1].name+" is dood"); }, 20);
+				}
+				game.player.turn = 1;
+			}
+		} else {
+			alert("Niemand is aan de beurt");
+		}
+	}
+}
+
+
+function updateStats(health, energy, damage){
+	console.log(game.player.turn);
+	if (game.player.turn === 1) {
+
+	} else if (game.player.turn === 2) {
+
+	} else {
+		alert("Actions disabled");
+	}
+
+}
+
+function randomNumber(min, max){
+	return Math.floor(Math.random()*(max-min+1)+min);
+}
+function averageNumber(min, max){
+	return (min + max) / 2;
+}
+</script>
+</body>
+</html>
