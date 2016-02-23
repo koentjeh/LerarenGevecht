@@ -1,43 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-	<link rel="stylesheet" href="core.css">
-
-	<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500' rel='stylesheet' type='text/css'>
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-	<title>spel</title>
-</head>
-<style>
-	*{
-		margin: 0;
-		padding: 0;
-	}
-	html, body {
-		height: 100%;
-		width: 100%;
-	}
-	canvas {
-		max-height: 100%;
-		max-width: 100%;
-	}
-</style>
-<body>
-
 <canvas id="canvas" width="1200 " height="660" style="border:1px solid #000000;box-sizing:border-box;"></canvas>
 
-<script src="options.js"></script>
-<script src="powers.js"></script>
-<script src="players.js"></script>
+
 <script>
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
-game.player[1] = characters[1];
-game.player[2] = characters[2];
+game.player[1] = characters[0];
+game.player[2] = characters[1];
 
 ////////// images ///////////
 var backgroundimg = new Image();
@@ -65,10 +34,10 @@ var arrowturnY = 250;
 var	arrowturnYMax = 260;
 
 window.onload = function(){
-	// setup();
+	setup();
 	// redraw();
 	game.player.turn = 1;
-	setInterval(redraw, 1000 / options.game.fps);
+	// setInterval(redraw, 1000 / options.game.fps);
 }
 
 function setup(){
@@ -80,6 +49,16 @@ function setup(){
 	ctx.textAlign = "left";
 
 	for(var i = 0; i < Object.keys(characters).length; i++) {
+		// drawCharacter(i, posx, posy, 80, 120);
+
+		canvas.addEventListener("click", function(e){
+			console.log(e.clientX+" => "+posx);
+
+
+			// if(e.clientX >= posx && e.clientX <= posx + width){
+			// }
+		});
+
 		ctx.drawImage(characters[i].id, posx, posy, 80, 120);
 
 		ctx.fillStyle = "#000000";
@@ -309,6 +288,49 @@ document.body.onkeypress = function(e) {
 	}
 }
 
+// function drawCharacter(i, x, y, width, height){
+// 	ctx.drawImage(characters[i].id, posx, posy, width, height);
+
+// 	canvas.addEventListener("click", function(e){
+// 		console.log(e.clientX+" => "+posx);
+
+
+// 		// if(e.clientX >= posx && e.clientX <= posx + width){
+// 		// }
+// 	})
+
+// 	ctx.fillStyle = "#000000";
+// 	ctx.fillText(characters[i].name, posx, posy);
+
+// 	characters[i].damage = 0;
+// 	characters[i].energy = 0;
+// 	characters[i].healing = 0;
+
+// 	for(var p = 1; p < Object.keys(characters[i].powers).length; p++) {
+// 		damage = averageNumber(characters[i].powers[p].damage.min, characters[i].powers[p].damage.max);
+// 		characters[i].damage = characters[i].damage + damage;
+// 		energy = averageNumber(characters[i].powers[p].energy.cost, characters[i].powers[p].energy.generate);
+// 		characters[i].energy = characters[i].energy + energy;
+// 		healing = averageNumber(characters[i].powers[p].healing.min, characters[i].powers[p].healing.max);
+// 		characters[i].healing = characters[i].healing + healing;
+// 	}
+
+// 	ctx.fillStyle = "#000000";
+// 	ctx.fillRect(posx, 160, 100, 62);
+// 	ctx.drawImage(stats, posx - 30, 160, 23, 62);
+
+// 	ctx.fillStyle = "#DADADA";
+// 	ctx.fillRect(posx, 160, characters[i].damage, 20);
+
+// 	ctx.fillStyle = "#FCE93B";
+// 	ctx.fillRect(posx, 181, 100 - characters[i].energy, 20);
+
+// 	ctx.fillStyle = "#D50000";
+// 	ctx.fillRect(posx, 202, characters[i].healing, 20);
+
+// 	posx = posx + 150;
+// }
+
 
 function updateStats(health, energy, damage){
 	console.log(game.player.turn);
@@ -329,5 +351,3 @@ function averageNumber(min, max){
 	return (min + max) / 2;
 }
 </script>
-</body>
-</html>

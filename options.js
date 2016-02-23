@@ -3,8 +3,8 @@ var options = {
 		fps : 30
 	},
 	player : {
-		player1 : null,
-		player2 : null,
+		1 : null,
+		2 : null,
 		turn : 0
 	},
 	background : {

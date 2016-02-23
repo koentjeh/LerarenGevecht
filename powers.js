@@ -200,7 +200,7 @@ var fer = {
 		}
 	},
 	4 : {
-		name : 'C++',
+		name : 'Binair',
 		energy : {
 			cost : 10,
 			generate : 0
