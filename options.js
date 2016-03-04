@@ -1,32 +1,18 @@
-var options = {
-	game : {
-		fps : 30
-	},
-	player : {
-		1 : null,
-		2 : null,
-		turn : 0
-	},
-	background : {
-		image : 'night'
-	},
-	default : {
-		actiontext : "",
-		actiondamage : "",
-		actionhealing : "",
-		actionenergy : ""
-	}
-}
 var game = {
-	player : {
-		1 : null,
-		2 : null,
-		turn : 0
+	options: {
+		fps: 30,
+		fpsCounter: 0,
+		background: 'night'
 	},
-	action : {
-		name : "",
-		damge : "",
-		healing : "",
-		energy : ""
+	player: {
+		1: null,
+		2: null,
+		turn: 0
+	},
+	action: {
+		name: "",
+		damage: "",
+		healing: "",
+		energy: ""
 	}
 }

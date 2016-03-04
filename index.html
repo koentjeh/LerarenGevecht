@@ -20,17 +20,14 @@
 <header id="header">
 	<img src="image/logo.png" class="header-logo">
 	<div class="menu-right">
-		<!-- <p>FPS: <span id="fpscounter">0</span></p> -->
+		<p>FPS: <span id="fpscounter">0</span></p>
 		<i class="material-icons">fullscreen</i>
 	</div>
 </header>
-<!-- <div class="progress"><div class="indeterminate"></div></div> -->
 
 <section id="game" class="card">
 	<canvas id="canvas" width="1200" height="660" style="width:700px;height:385px;"></canvas>
 </section>
-
-
 
 <script src="options.js"></script>
 <script src="powers.js"></script>
@@ -47,21 +44,22 @@ if(game.player[2] == null){
 }
 
 var arrowturnDir = 1;
-var arrowturnY = 250;
-var	arrowturnYMax = 260;
+var arrowturnY = 200;
 
 ////////// images ///////////
 var backgroundimg = new Image();
-backgroundimg.src = "image/background/"+options.background.image+".jpg";
+backgroundimg.src = "image/background/"+game.options.background+".jpg";
 
 var playerturn = new Image();
 playerturn.src = "image/arrow_down.gif";
 
+var player1img = new Image();
+var player2img = new Image();
+
 for(var i = 0; i < Object.keys(characters).length; i++) {
 	characters[i].id = new Image();
 	characters[i].id.src = "image/character/player1/"+characters[i].character+".gif";
-}
-for(var i = 0; i < Object.keys(characters).length; i++) {
+
 	characters[i].id2 = new Image();
 	characters[i].id2.src = "image/character/player2/"+characters[i].character+".gif";
 }
@@ -70,7 +68,7 @@ window.onload = function(){
 	setup();
 	// redraw();
 	// game.player.turn = 1;
-	// setInterval(redraw, 1000 / options.game.fps);
+	// setInterval(redraw, 1000 / game.options.fps);
 }
 
 var count1 = 0;
@@ -116,6 +114,9 @@ function setup(){
 	ctx.fillText("p1", 525, 20);
 	ctx.fillText("p2", 670, 650);
 
+	player1img.src = "image/character/player1/"+game.player[1].character+".gif";
+	player2img.src = "image/character/player2/"+game.player[2].character+".gif";
+
 	posx = 200;
 	posy = 0;
 
@@ -138,12 +139,6 @@ function setup(){
 		posy = posy + cHeight;
 	}
 
-	var player1img = new Image();
-	player1img.src = "image/character/player1/"+game.player[1].character+".gif";
-
-	var player2img = new Image();
-	player2img.src = "image/character/player2/"+game.player[2].character+".gif";
-
 	if(game.player[1] !== null){
 		selectCharacter(player1img, 570, 80, 80, 120);
 	}
@@ -152,28 +147,30 @@ function setup(){
 	}
 
 	canvas.onclick = function(e){
-		if(e.offsetX >= 0 && e.offsetX <= 290 && e.offsetY >= 0 && e.offsetY < 97) {
-			game.player[1] = characters[0];
-		} else if (e.offsetX >= 0 && e.offsetX <= 290 && e.offsetY >= 97 && e.offsetY < 193) {
-			game.player[1] = characters[1];
-		} else if (e.offsetX >= 0 && e.offsetX <= 290 && e.offsetY >= 193 && e.offsetY < 290) {
-			game.player[1] = characters[2];
-		} else if (e.offsetX >= 0 && e.offsetX <= 290 && e.offsetY >= 290 && e.offsetY < 383) {
-			game.player[1] = characters[3];
-		} else if(e.offsetX >= 410 && e.offsetX <= 700 && e.offsetY >= 0 && e.offsetY < 97) {
-			game.player[2] = characters[0];
-		} else if (e.offsetX >= 410 && e.offsetX <= 700 && e.offsetY >= 97 && e.offsetY < 193) {
-			game.player[2] = characters[1];
-		} else if (e.offsetX >= 410 && e.offsetX <= 700 && e.offsetY >= 193 && e.offsetY < 290) {
-			game.player[2] = characters[2];
-		} else if (e.offsetX >= 410 && e.offsetX <= 700 && e.offsetY >= 290 && e.offsetY < 383) {
-			game.player[2] = characters[3];
-		}
-		setup();
+		if(game.player.turn == 0){
+			if(e.offsetX >= 0 && e.offsetX <= 290 && e.offsetY >= 0 && e.offsetY < 97) {
+				game.player[1] = characters[0];
+			} else if (e.offsetX >= 0 && e.offsetX <= 290 && e.offsetY >= 97 && e.offsetY < 193) {
+				game.player[1] = characters[1];
+			} else if (e.offsetX >= 0 && e.offsetX <= 290 && e.offsetY >= 193 && e.offsetY < 290) {
+				game.player[1] = characters[2];
+			} else if (e.offsetX >= 0 && e.offsetX <= 290 && e.offsetY >= 290 && e.offsetY < 383) {
+				game.player[1] = characters[3];
+			} else if(e.offsetX >= 410 && e.offsetX <= 700 && e.offsetY >= 0 && e.offsetY < 97) {
+				game.player[2] = characters[0];
+			} else if (e.offsetX >= 410 && e.offsetX <= 700 && e.offsetY >= 97 && e.offsetY < 193) {
+				game.player[2] = characters[1];
+			} else if (e.offsetX >= 410 && e.offsetX <= 700 && e.offsetY >= 193 && e.offsetY < 290) {
+				game.player[2] = characters[2];
+			} else if (e.offsetX >= 410 && e.offsetX <= 700 && e.offsetY >= 290 && e.offsetY < 383) {
+				game.player[2] = characters[3];
+			}
+			setup();
 
-		if(e.offsetX >= 292 && e.offsetX <= 406 && e.offsetY >= 147 && e.offsetY <= 204){
-			game.player.turn = 1;
-			setInterval(redraw, 1000 / options.game.fps);
+			if(e.offsetX >= 292 && e.offsetX <= 406 && e.offsetY >= 147 && e.offsetY <= 204){
+				game.player.turn = 1;
+				setInterval(redraw, 1000 / game.options.fps);
+			}
 		}
 	};
 }
@@ -185,84 +182,83 @@ function selectCharacter(character, x, y, width, height){
 function redraw(){
 	canvas.width = canvas.width;
 
-	var player1img = new Image();
 	player1img.src = "image/character/player1/"+game.player[1].character+".gif";
-
-	var player2img = new Image();
 	player2img.src = "image/character/player2/"+game.player[2].character+".gif";
 
 	// menu
 	ctx.fillStyle = "#3E2723";
-	ctx.rect(0, 0, 1200, 60);
-	ctx.rect(0, 510, 1200, 150);
+	ctx.rect(0, 0, 1200, 140);
+	ctx.rect(0, 440, 1200, 220);
 	ctx.fill();
 
 	// stats
 	ctx.fillStyle = "#000000";
-	ctx.fillRect(10, 5, 100, 31);
-	ctx.fillRect(1090, 5, 100, 31);
+	ctx.fillRect(10, 10, 200, 81);
+	ctx.fillRect(990, 10, 200, 81);
 
 	ctx.fillStyle="#D50000";
-	ctx.fillRect(10, 5, (game.player[1].stats.health / 100) * 100, 15);
-	ctx.fillRect(1090, 5, (game.player[2].stats.health / 100) * 100, 15);
+	ctx.fillRect(10, 10, game.player[1].health*2, 40);
+	ctx.fillRect(990, 10, game.player[2].health*2, 40);
 
 	ctx.fillStyle = "#43A047";
-	ctx.fillRect(10, 21, (game.player[1].stats.energy / 100) * 100, 15);
-	ctx.fillRect(1090, 21, (game.player[2].stats.energy / 100) * 100, 15);
+	ctx.fillRect(10, 51, game.player[1].energy*2, 40);
+	ctx.fillRect(990, 51, game.player[2].energy*2, 40);
 
 
-	ctx.font = "12px Arial";
+	ctx.font = "22px Arial";
 	ctx.textAlign = "left";
 	ctx.fillStyle = "#ffffff";
-	ctx.fillText(game.player[1].name, 10, 52);
-	ctx.fillText(game.player[2].name, 1090, 52);
-
-	ctx.font = "10px Arial";
-	ctx.textAlign = "center";
-	ctx.fillText(game.player[1].stats.health+"/100", 60, 16);
-	ctx.fillText(game.player[1].stats.energy+"/100", 60, 32);
-	ctx.fillText(game.player[2].stats.health+"/100", 1140, 16);
-	ctx.fillText(game.player[2].stats.energy+"/100", 1140, 32);
+	ctx.fillText(game.player[1].name, 10, 120);
+	ctx.textAlign = "right";
+	ctx.fillText(game.player[2].name, 1190, 120);
 
 	ctx.font = "18px Arial";
-	ctx.fillText(options.default.actiontext, 600, 535);
-	ctx.fillText(options.default.actiondamage, 600, 565);
-	ctx.fillText(options.default.actionhealing, 600, 585);
-	ctx.fillText(options.default.actionenergy, 600, 605);
+	ctx.textAlign = "center";
+	ctx.fillText(game.player[1].health+"/100", 110, 36);
+	ctx.fillText(game.player[1].energy+"/100", 110, 78);
+	ctx.fillText(game.player[2].health+"/100", 1095, 36);
+	ctx.fillText(game.player[2].energy+"/100", 1095, 78);
 
-	var posy = 520;
+	ctx.font = "28px Arial";
+	ctx.fillText(game.action.name, 600, 490);
+	ctx.fillText(game.action.damage, 600, 530);
+	ctx.fillText(game.action.healing, 600, 565);
+	ctx.fillText(game.action.energy, 600, 600);
+
+	var posy = 450;
 	ctx.textAlign = "left";
 
 	for (i = 1; i <= Object.keys(game.player[1].powers).length; i++) {
-		posy = posy + 24;
+		posy = posy + 36;
 		ctx.fillText(i+": "+game.player[1].powers[i].name, 10, posy);
 	}
 
 	ctx.textAlign = "right";
-	var posy = 520;
+	var posy = 450;
 	for (i = 1; i <= Object.keys(game.player[2].powers).length; i++) {
-		posy = posy + 24;
+		posy = posy + 36;
 		ctx.fillText(i+": "+game.player[2].powers[i].name, 1190, posy);
 	}
 
-	ctx.drawImage(backgroundimg, 0, 60, 1200, 450);
-	ctx.drawImage(player1img, 100, 300, 110, 195);
-	ctx.drawImage(player2img, 1000, 300, 110, 195);
+	ctx.drawImage(backgroundimg, 0, 140, 1200, 300);
+	ctx.drawImage(player1img, 100, 230, 110, 195);
+	ctx.drawImage(player2img, 1000, 230, 110, 195);
 
 	thisplayerturn();
+	game.options.fpsCounter++;
 }
 
 function thisplayerturn(){
 	if (arrowturnDir === 1) {
 		arrowturnY += 1;
 
-		if (arrowturnY > 260) {
+		if (arrowturnY > 200) {
 			arrowturnDir = -1;
 		}
 	} else {
 		arrowturnY -= 1;
 
-		if(arrowturnY < 240) {
+		if(arrowturnY < 180) {
 			arrowturnDir = 1;
 		}
 	}
@@ -297,76 +293,76 @@ document.body.onkeypress = function(e) {
 		}
 
 		if (game.player.turn === 1) {
-			if(game.player[1].stats.energy - game.player[1].powers[move].energy.cost < 0){
+			if(game.player[1].energy - game.player[1].powers[move].energy.cost < 0){
 				alert('Niet genoeg energie');
 			} else {
 				damage = randomNumber(game.player[1].powers[move].damage.min, game.player[1].powers[move].damage.max);
 				healing = randomNumber(game.player[1].powers[move].healing.min, game.player[1].powers[move].healing.max)
 
-				options.default.actiontext = game.player[1].name+" gebruikt: "+game.player[1].powers[move].name;
-				options.default.actiondamage = "Schade: -"+damage;
-				options.default.actionhealing = "Levens: +"+healing;
+				game.action.name = game.player[1].name+" gebruikt: "+game.player[1].powers[move].name;
+				game.action.damage = "Schade: -"+damage;
+				game.action.healing = "Levens: +"+healing;
 
 				if (game.player[1].powers[move].energy.cost === 0) {
-					options.default.actionenergy = "Energie: +"+game.player[1].powers[move].energy.generate;
-					game.player[1].stats.energy += game.player[1].powers[move].energy.generate;
-					if (game.player[1].stats.energy > 100) {
-						game.player[1].stats.energy = 100;
+					game.action.energy = "Energie: +"+game.player[1].powers[move].energy.generate;
+					game.player[1].energy += game.player[1].powers[move].energy.generate;
+					if (game.player[1].energy > 100) {
+						game.player[1].energy = 100;
 					}
 				} else {
-					options.default.actionenergy = "Energie: -"+game.player[1].powers[move].energy.cost;
-					game.player[1].stats.energy -= game.player[1].powers[move].energy.cost;
-					if (game.player[1].stats.energy < 0) {
-						game.player[1].stats.energy = 0;
+					game.action.energy = "Energie: -"+game.player[1].powers[move].energy.cost;
+					game.player[1].energy -= game.player[1].powers[move].energy.cost;
+					if (game.player[1].energy < 0) {
+						game.player[1].energy = 0;
 					}
 				}
 
-				game.player[1].stats.health += healing;
-				if (game.player[1].stats.health > 100) {
-					game.player[1].stats.health = 100;
+				game.player[1].health += healing;
+				if (game.player[1].health > 100) {
+					game.player[1].health = 100;
 				}
 
-				game.player[2].stats.health -= damage;
-				if (game.player[2].stats.health < 0) {
-					game.player[2].stats.health = 0;
+				game.player[2].health -= damage;
+				if (game.player[2].health < 0) {
+					game.player[2].health = 0;
 					alert(game.player[2].name+" is dood");
 					window.location.reload();
 				}
 				game.player.turn = 2;
 			}
 		} else if (game.player.turn === 2) {
-			if(game.player[2].stats.energy - game.player[2].powers[move].energy.cost < 0){
+			if(game.player[2].energy - game.player[2].powers[move].energy.cost < 0){
 				alert('Niet genoeg energie');
 			} else {
 				if(game.player[2].powers[move].energy.cost === 0){
-					options.default.actionenergy = "Energie: +"+game.player[2].powers[move].energy.generate;
-					game.player[2].stats.energy += game.player[2].powers[move].energy.generate;
-					if (game.player[2].stats.energy > 100) {
-						game.player[2].stats.energy = 100;
+					game.action.energy = "Energie: +"+game.player[2].powers[move].energy.generate;
+					game.player[2].energy += game.player[2].powers[move].energy.generate;
+					if (game.player[2].energy > 100) {
+						game.player[2].energy = 100;
 					}
 				} else {
-					options.default.actionenergy = "Energie: -"+game.player[2].powers[move].energy.cost;
-					game.player[2].stats.energy -= game.player[2].powers[move].energy.cost;
-					if (game.player[2].stats.energy < 0) {
-						game.player[2].stats.energy = 0;
+					game.action.energy = "Energie: -"+game.player[2].powers[move].energy.cost;
+					game.player[2].energy -= game.player[2].powers[move].energy.cost;
+					if (game.player[2].energy < 0) {
+						game.player[2].energy = 0;
 					}
 				}
 
 				damage = randomNumber(game.player[2].powers[move].damage.min, game.player[2].powers[move].damage.max);
 				healing = randomNumber(game.player[2].powers[move].healing.min, game.player[2].powers[move].healing.max);
 
-				options.default.actiontext = game.player[2].name+" gebruikt: "+game.player[2].powers[move].name;
-				options.default.actiondamage = "Schade: -"+damage;
-				options.default.actionhealing = "Levens: +"+healing;
+				game.action.name = game.player[2].name+" gebruikt: "+game.player[2].powers[move].name;
+				game.action.damage = "Schade: -"+damage;
+				game.action.healing = "Levens: +"+healing;
 
-				game.player[2].stats.health += healing;
-				if (game.player[2].stats.health > 100) {
-					game.player[2].stats.health = 100;
+				game.player[2].health += healing;
+				if (game.player[2].health > 100) {
+					game.player[2].health = 100;
 				}
 
-				game.player[1].stats.health -= damage;
-				if (game.player[1].stats.health <= 0) {
-					game.player[1].stats.health = 0;
+				game.player[1].health -= damage;
+				if (game.player[1].health <= 0) {
+					game.player[1].health = 0;
 					alert(game.player[1].name+" is dood");
 					window.location.reload();
 				}
@@ -378,12 +374,19 @@ document.body.onkeypress = function(e) {
 	}
 }
 
+
+setInterval(function(){
+	document.getElementById("fpscounter").innerHTML = parseInt(game.options.fpsCounter);
+	game.options.fpsCounter = 0;
+}, 1000);
+
 function randomNumber(min, max){
 	return Math.floor(Math.random()*(max-min+1)+min);
 }
 function averageNumber(min, max){
 	return (min + max) / 2;
 }
+
 </script>
 </body>
 </html>

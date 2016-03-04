@@ -233,7 +233,7 @@ var fer = {
 
 var piet = {
 	1 : {
-		name : 'Miscommunicatie',
+		name : 'Virtual hosting',
 		energy : {
 			cost : 10,
 			generate : 0
@@ -293,7 +293,7 @@ var piet = {
 		}
 	},
 	5 : {
-		name : 'Late reactie',
+		name : 'Uitgebreide uitleg',
 		energy : {
 			cost : 0,
 			generate : 5
