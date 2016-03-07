@@ -1,6 +1,6 @@
 var game = {
 	options: {
-		fps: 30,
+		fps: 10000,
 		fpsCounter: 0,
 		background: 'night'
 	},
